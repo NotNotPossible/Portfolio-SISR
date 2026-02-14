@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio SISR - Cybersecurity & Infrastructure</title>
+    <style>
+        :root {
+            --color-bg-primary: #0f172a;
+            --color-bg-secondary: #1e293b;
+            --color-bg-elevated: #334155;
+            --color-text-primary: #f1f5f9;
+            --color-text-secondary: #cbd5e1;
+            --color-text-muted: #94a3b8;
+            --color-accent: #38bdf8;
+            --color-accent-hover: #0ea5e9;
+            --color-success: #10b981;
+            --color-error: #ef4444;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, system-ui, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* PAGE DE MOT DE PASSE */
+        #passwordPage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .lock-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: slideDown 0.6s ease 0.2s forwards;
+        }
+
+        .access-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: fadeIn 0.6s ease 0.4s forwards;
+        }
+
+        .access-subtitle {
+            color: var(--color-text-secondary);
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeIn 0.6s ease 0.6s forwards;
+        }
+
+        .password-container {
+            background: var(--color-bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            opacity: 0;
+            animation: slideUp 0.6s ease 0.8s forwards;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            background: var(--color-bg-elevated);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            color: var(--color-text-primary);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+
+        .password-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            background: var(--color-accent);
+            color: var(--color-bg-primary);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .password-btn:hover {
+            background: var(--color-accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: var(--color-error);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .error-message.show {
+            opacity: 1;
+        }
+
+        .shake {
+            animation: shake 0.5s ease;
+        }
+
+        /* SITE PRINCIPAL */
+        #mainSite {
+            display: none;
+        }
+
+        #mainSite.show {
+            display: block;
+        }
+
+        /* HEADER */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-accent);
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--color-text-primary);
+            transition: all 0.3s ease;
+        }
+
+        /* SECTIONS */
+        section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--color-accent);
+        }
+
+        .section-subtitle {
+            color: var(--color-text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+
+        /* HERO */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding-top: 80px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: var(--color-text-secondary);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            animation: fadeInUp 0.8s ease 0.4s backwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInUp 0.8s ease 0.6s backwards;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--color-accent);
+            color: var(--color-bg-primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-accent);
+            border: 2px solid var(--color-accent);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-accent);
+            color: var(--color-bg-primary);
+        }
+
+        /* PARCOURS */
+        .about-content {
+            background: var(--color-bg-secondary);
+            padding: 3rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+        }
+
+        .about-content h3 {
+            color: var(--color-accent);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .about-content p {
+            color: var(--color-text-secondary);
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        .mission-list {
+            list-style: none;
+            margin-top: 1.5rem;
+        }
+
+        .mission-list li {
+            padding: 0.5rem 0;
+            color: var(--color-text-secondary);
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .mission-list li::before {
+            content: "▸";
+            color: var(--color-accent);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* PROJETS */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .project-card {
+            background: var(--color-bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--color-accent);
+            box-shadow: 0 20px 60px rgba(56, 189, 248, 0.2);
+        }
+
+        .project-header {
+            background: var(--color-bg-elevated);
+            padding: 1.5rem;
+        }
+
+        .project-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--color-accent);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .project-body {
+            padding: 1.5rem;
+        }
+
+        .project-body h4 {
+            color: var(--color-accent);
+            font-size: 1.1rem;
+            margin: 1.5rem 0 0.8rem;
+        }
+
+        .project-body p, .project-body ul {
+            color: var(--color-text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .project-body ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .project-body ul li {
+            padding: 0.3rem 0;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .project-body ul li::before {
+            content: "✓";
+            color: var(--color-success);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* COMPÉTENCES */
+        .skills-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .skill-category {
+            background: var(--color-bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+
+        .skill-category h3 {
+            color: var(--color-accent);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-category p {
+            color: var(--color-text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-logos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .skill-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--color-bg-elevated);
+            border-radius: 8px;
+            color: var(--color-text-primary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .skill-logo img {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .skill-logo:hover {
+            background: var(--color-accent);
+            color: var(--color-bg-primary);
+            transform: translateY(-2px);
+        }
+
+        .skill-logo:hover img {
+            filter: brightness(0) invert(1);
+        }
+
+        /* IMAGES PROJETS */
+        .project-cover {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.12);
+        }
+
+        .project-media {
+            margin: 1.5rem 0;
+            background: rgba(15, 23, 42, 0.35);
+            border: 1px solid rgba(56, 189, 248, 0.12);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .project-media img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .project-media figcaption {
+            padding: 0.9rem 1rem;
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+            border-top: 1px solid rgba(56, 189, 248, 0.08);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .gallery figure {
+            margin: 0;
+            background: rgba(15, 23, 42, 0.35);
+            border: 1px solid rgba(56, 189, 248, 0.12);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery figure:hover {
+            transform: translateY(-4px);
+        }
+
+        .gallery img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery figcaption {
+            padding: 0.75rem 0.9rem;
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--color-accent);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* CONTACT */
+        .contact-content {
+            text-align: center;
+            background: var(--color-bg-secondary);
+            padding: 3rem;
+            border-radius: 12px;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            color: var(--color-text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .contact-item svg {
+            width: 24px;
+            height: 24px;
+            color: var(--color-accent);
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--color-bg-primary);
+            padding: 2rem;
+            text-align: center;
+            color: var(--color-text-muted);
+            border-top: 1px solid rgba(56, 189, 248, 0.1);
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: var(--color-bg-secondary);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                transition: left 0.3s ease;
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            section {
+                padding: 4rem 1.5rem;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .about-content {
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- PAGE DE MOT DE PASSE -->
+    <div id="passwordPage">
+        <svg class="lock-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C9.243 2 7 4.243 7 7v3H6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8c0-1.103-.897-2-2-2h-1V7c0-2.757-2.243-5-5-5zm0 2c1.654 0 3 1.346 3 3v3H9V7c0-1.654 1.346-3 3-3z" fill="#38bdf8"/>
+        </svg>
+        <h1 class="access-title">Accès Réservé</h1>
+        <p class="access-subtitle">Jury d'examen &amp; Recruteurs</p>
+        <div class="password-container">
+            <input type="password" id="passwordInput" class="password-input" placeholder="Code d'accès" autofocus>
+            <button onclick="checkPassword()" class="password-btn">Accéder</button>
+            <p id="errorMsg" class="error-message">Code incorrect</p>
+        </div>
+    </div>
+
+    <!-- SITE PRINCIPAL -->
+    <div id="mainSite">
+        <header>
+            <nav>
+                <div class="logo">Portfolio SISR</div>
+                <div class="menu-toggle" onclick="toggleMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#hero" onclick="closeMenu()">Accueil</a></li>
+                    <li><a href="#parcours" onclick="closeMenu()">Parcours</a></li>
+                    <li><a href="#projets" onclick="closeMenu()">Projets</a></li>
+                    <li><a href="#competences" onclick="closeMenu()">Compétences</a></li>
+                    <li><a href="#contact" onclick="closeMenu()">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- HERO -->
+        <section id="hero">
+            <h1 class="hero-title">Mathias Lesne</h1>
+            <p class="hero-subtitle">Alternant SISR – Cybersecurity &amp; Infrastructure</p>
+            <p class="hero-description">
+                Spécialisé en sécurité Active Directory, détection d'intrusions et administration d'infrastructures réseau sécurisées.
+            </p>
+            <div class="hero-buttons">
+                <a href="#projets" class="btn btn-primary">Voir mes projets</a>
+                <a href="assets/cv/cv.pdf" class="btn btn-secondary" download>Télécharger mon CV</a>
+                <a href="#contact" class="btn btn-secondary">Me contacter</a>
+            </div>
+        </section>
+
+        <!-- PARCOURS -->
+        <section id="parcours">
+            <h2 class="section-title">Parcours</h2>
+            <p class="section-subtitle">Mon expérience en entreprise et mes objectifs professionnels</p>
+
+            <div class="about-content">
+                <h3>À propos</h3>
+                <p>
+                    Actuellement en 2ᵉ année de <strong>BTS SIO option SISR</strong> en alternance, je cumule une double expérience en administration d'infrastructures système/réseau et en cybersécurité opérationnelle.
+                </p>
+                <p>
+                    En entreprise, j'interviens sur le support utilisateur, l'administration réseau (configuration et déploiement de switches, validation de solutions VPN en pré-production) et participe activement aux projets de sécurité : lecture d'audits, identification de vulnérabilités et renforcement de l'infrastructure.
+                </p>
+                <p>
+                    J'ai mené plusieurs missions en autonomie, notamment le remplacement et la reconfiguration de switches sur différents sites à Paris, ainsi que la participation à des audits de sécurité internes.
+                </p>
+                <p>
+                    En parallèle, je pratique quotidiennement sur des plateformes de labs (TryHackMe, AWS Skill Builder) et je développe mes compétences en attaque/sécurité Active Directory, énumération, mapping, brute force/rainbow table détection d'intrusions (IDS/SIEM) et hardening système.
+                </p>
+                <h3 style="margin-top: 2rem;">Objectif professionnel</h3>
+                <p>
+                    Mon objectif est d'évoluer vers un poste de <strong>Cloud Security Engineer</strong>, en combinant ma maîtrise des infrastructures on-premise avec l'apprentissage approfondi des architectures cloud (AWS/Azure) et des pratiques DevSecOps.
+                </p>
+            </div>
+
+            <div class="about-content">
+                <h3>Expérience en entreprise</h3>
+                <p><strong>GTF immobilier</strong> – 2025 - 2026<br>Alternant Support &amp; Administration Réseau</p>
+                
+                <h4>Missions principales :</h4>
+                
+                <p><strong>1. Administration réseau &amp; infrastructure</strong></p>
+                <ul class="mission-list">
+                    <li>Déploiement et remplacement de switches sur plusieurs sites (Paris)</li>
+                    <li>Configuration d'équipements réseau en autonomie</li>
+                    <li>Tests et validation de solutions VPN en environnement de pré-production</li>
+                    <li>Configuration multi-postes et standardisation</li>
+                </ul>
+
+                <p><strong>2. Support technique</strong></p>
+                <ul class="mission-list">
+                    <li>Support utilisateur niveau 1-2</li>
+                    <li>Dépannage réseau et résolution d'incidents</li>
+                    <li>Documentation des interventions</li>
+                </ul>
+
+                <p><strong>3. Sécurité &amp; projets</strong></p>
+                <ul class="mission-list">
+                    <li>Participation active aux projets de sécurité de l'entreprise</li>
+                    <li>Lecture et analyse d'audits de sécurité (identification de vulnérabilités)</li>
+                    <li>Contribution au renforcement de la posture de sécurité</li>
+                    <li>Veille technologique quotidienne</li>
+                </ul>
+
+                <p><strong>Environnement technique :</strong> Switches réseau, VPN, Windows Server, Active Directory, solutions de sécurité et +</p>
+            </div>
+        </section>
+
+        <!-- PROJETS -->
+        <section id="projets">
+            <h2 class="section-title">Projets</h2>
+            <p class="section-subtitle">Réalisations techniques en infrastructure et cybersécurité</p>
+
+            <div class="projects-grid">
+                <!-- PROJET 1 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <span class="project-badge">École · Lab réaliste · Sécurité AD</span>
+                        <h3 class="project-title">Infrastructure Système &amp; Réseau + Audit Active Directory</h3>
+                    </div>
+                    <img
+                        class="project-cover"
+                        src="assets/images/projects/ad-audit/cover.png"
+                        alt="Aperçu du projet : infrastructure et audit Active Directory"
+                        loading="lazy"
+                    />
+                    <div class="project-body">
+                        <h4>Contexte</h4>
+                        <p>Conception et déploiement d'une infrastructure IT complète simulant un environnement d'entreprise réel, dans le cadre de travaux pratiques avancés. L'objectif était de maîtriser l'ensemble de la chaîne : déploiement, configuration, sécurisation et audit de conformité.</p>
+
+                        <h4>Stack technique</h4>
+                        <p><strong>Infrastructure réseau :</strong> Switches, modems WiFi, firewalls pfSense<br>
+                        <strong>Active Directory :</strong> 2 contrôleurs de domaine (AD primaire + AD secondaire)<br>
+                        <strong>Services :</strong> Microsoft Exchange (messagerie), services annexes<br>
+                        <strong>Outils d'audit :</strong> PingCastle, Purple Knight<br>
+                        <strong>Pentest/test :</strong> Kali Linux</p>
+
+                        <h4>Ma contribution</h4>
+                        <ul>
+                            <li>Déploiement des 2 Active Directory (architecture multi-domaines)</li>
+                            <li>Configuration de Microsoft Exchange pour la messagerie d'entreprise</li>
+                            <li>Configuration d'un poste Kali Linux pour tests de sécurité</li>
+                            <li>Audit de sécurité AD avec PingCastle et Purple Knight</li>
+                            <li>Analyse des rapports d'audit et identification des vulnérabilités</li>
+                            <li>Correction des configurations selon recommandations ANSSI</li>
+                        </ul>
+
+                        <h4>Résultats</h4>
+                        <ul>
+                            <li>Vulnérabilité détectée : Politique de mot de passe faible (7 caractères au lieu de 8 minimum)</li>
+                            <li>Correction appliquée : Mise en conformité selon documentation ANSSI</li>
+                            <li>Audit post-correction : Score PingCastle amélioré</li>
+                            <li>Documentation complète : Captures avant/après, procédure de remédiation</li>
+                        </ul>
+
+                        <h4>Développement détaillé du projet</h4>
+
+                        <p><span class="step-number">Étape 1</span> <strong>Scan initial de l'Active Directory</strong></p>
+                        <p>Scan de l'infrastructure Active Directory avec deux outils complémentaires : <strong>PingCastle</strong> et <strong>Purple Knight</strong>. Les deux outils ont identifié la même vulnérabilité critique.</p>
+                        
+                        <div class="gallery">
+                            <figure>
+                                <img src="assets/images/projects/ad-audit/pingcastle-score-before.png" alt="Score PingCastle avant correction" loading="lazy">
+                                <figcaption>Score initial PingCastle (avant remédiation)</figcaption>
+                            </figure>
+                            <figure>
+                                <img src="assets/images/projects/ad-audit/purpleknight-score-before.png" alt="Score Purple Knight avant correction" loading="lazy">
+                                <figcaption>Score initial Purple Knight (avant remédiation)</figcaption>
+                            </figure>
+                            <figure>
+                                <img src="assets/images/projects/ad-audit/vulnerability-detected.png" alt="Vulnérabilité détectée" loading="lazy">
+                                <figcaption>Vulnérabilité identifiée : politique de mot de passe faible</figcaption>
+                            </figure>
+                        </div>
+
+                        <p><span class="step-number">Étape 2</span> <strong>Analyse et référence ANSSI</strong></p>
+                        <p>Dans le rapport PingCastle, la section "Vulnérabilités" fournit la définition de chaque faiblesse détectée. Cette vulnérabilité spécifique est directement liée aux recommandations de l'<strong>ANSSI</strong> (Agence nationale de la sécurité des systèmes d'information).</p>
+                        <p>La recommandation ANSSI stipule qu'une politique de mot de passe conforme doit imposer un minimum de <strong>8 caractères</strong>. L'infrastructure auditée n'en exigeait que 7.</p>
+                        
+                        <div class="project-media">
+                            <img src="assets/images/projects/ad-audit/anssi-reference.png" alt="Référence ANSSI dans PingCastle" loading="lazy">
+                            <figcaption>Lien vers la recommandation ANSSI dans le rapport PingCastle : <a href="https://www.ssi.gouv.fr/" target="_blank" style="color: var(--color-accent);">ssi.gouv.fr</a></figcaption>
+                        </div>
+
+                        <p><span class="step-number">Étape 3</span> <strong>Accès aux stratégies de groupe (GPO)</strong></p>
+                        <p>Pour corriger cette vulnérabilité, modification de la politique de mot de passe via les <strong>Stratégies de Groupe (GPO)</strong> dans Active Directory.</p>
+                        
+                        <div class="gallery">
+                            <figure>
+                                <img src="assets/images/projects/ad-audit/gpo-access-1.png" alt="Accès aux GPO" loading="lazy">
+                                <figcaption>Navigation vers les stratégies de groupe</figcaption>
+                            </figure>
+                            <figure>
+                                <img src="assets/images/projects/ad-audit/gpo-access-2.png" alt="Recherche de la GPO" loading="lazy">
+                                <figcaption>Localisation de la politique de sécurité</figcaption>
+                            </figure>
+                            <figure>
+                                <img src="assets/images/projects/ad-audit/gpo-password-policy.png" alt="Politique de mot de passe" loading="lazy">
+                                <figcaption>Configuration de la longueur minimale du mot de passe</figcaption>
+                            </figure>
+                        </div>
+
+                        <p><span class="step-number">Étape 4</span> <strong>Modification de la politique</strong></p>
+                        <p>Passage de la longueur minimale du mot de passe de <strong>7 caractères à 8 caractères</strong>, conformément aux recommandations ANSSI.</p>
+                        
+                        <div class="project-media">
+                            <img src="assets/images/projects/ad-audit/password-change-7to8.png" alt="Modification 7 à 8 caractères" loading="lazy">
+                            <figcaption>Modification : longueur minimale passée de 7 à 8 caractères</figcaption>
+                        </div>
+
+                        <p><span class="step-number">Étape 5</span> <strong>Audit post-correction</strong></p>
+                        <p>Après application de la correction, nouveau scan avec <strong>PingCastle</strong> et <strong>Purple Knight</strong> pour valider l'efficacité de la remédiation.</p>
+                        <p><strong>Résultat :</strong> Augmentation du score de sécurité sur les deux outils, confirmant que la vulnérabilité a été corrigée avec succès.</p>
+                        
+                        <div class="gallery">
+                            <figure>
+                                <img src="assets/images/projects/ad-audit/pingcastle-score-after.png" alt="Score PingCastle après correction" loading="lazy">
+                                <figcaption>Score PingCastle amélioré (post-correction)</figcaption>
+                            </figure>
+                            <figure>
+                                <img src="assets/images/projects/ad-audit/purpleknight-score-after.png" alt="Score Purple Knight après correction" loading="lazy">
+                                <figcaption>Score Purple Knight amélioré (post-correction)</figcaption>
+                            </figure>
+                            <figure>
+                                <img src="assets/images/projects/ad-audit/vulnerability-fixed.png" alt="Vulnérabilité corrigée" loading="lazy">
+                                <figcaption>Confirmation : vulnérabilité résolue</figcaption>
+                            </figure>
+                        </div>
+
+                        <p><strong>Impact :</strong> Remédiation réussie d'une vulnérabilité critique, amélioration mesurable de la posture de sécurité Active Directory, validation par audit post-correction.</p>
+                    </div>
+                </div>
+
+                <!-- PROJET 2 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <span class="project-badge">École · Lab · Blue Team</span>
+                        <h3 class="project-title">Détection d'Intrusions &amp; Sécurité Réseau (IDS)</h3>
+                    </div>
+                    <img
+                        class="project-cover"
+                        src="assets/images/projects/ids-snort/cover.png"
+                        alt="Aperçu du projet : IDS Snort sur pfSense"
+                        loading="lazy"
+                    />
+                    <div class="project-body">
+                        <h4>Contexte</h4>
+                        <p>Mise en place d'un système de détection d'intrusions (IDS) sur un firewall pfSense pour surveiller le trafic réseau et identifier les tentatives d'attaques. Projet réalisé dans un environnement de lab sécurisé.</p>
+
+                        <h4>Stack technique</h4>
+                        <p><strong>Firewall :</strong> pfSense<br>
+                        <strong>IDS :</strong> Snort<br>
+                        <strong>Outils de test :</strong> Kali Linux (Nmap, outils de reconnaissance réseau)<br>
+                        <strong>Analyse :</strong> Logs Snort, dashboard pfSense</p>
+
+                        <h4>Ma contribution</h4>
+                        <ul>
+                            <li>Installation et configuration de Snort sur le firewall pfSense</li>
+                            <li>Configuration des règles de détection (reconnaissance réseau, scan de ports)</li>
+                            <li>Tests d'intrusion simulés depuis un poste Kali Linux</li>
+                            <li>Analyse des alertes et validation de la détection</li>
+                            <li>Documentation des résultats (captures, interprétation des logs)</li>
+                        </ul>
+
+                        <h4>Résultats</h4>
+                        <ul>
+                            <li>Détection réussie : Tentative de ping/énumération réseau détectée en temps réel par Snort</li>
+                            <li>Identification de la phase d'attaque : Reconnaissance réseau (début d'une chaîne d'attaque potentielle) selon MITRE ATT&CK</li>
+                            <li>Validation du dispositif : Système d'alerte fonctionnel et réponse rapide (First Responder)</li>
+                        </ul>
+
+                        <h4>Développement détaillé du projet</h4>
+
+                        <p><span class="step-number">Étape 1</span> <strong>Configuration d'une règle de détection Snort</strong></p>
+                        <p>Avant de tester la détection, création d'une <strong>règle Snort personnalisée</strong> sur le firewall pfSense pour surveiller les tentatives de reconnaissance réseau (scans Nmap, pings suspects, etc.).</p>
+                        
+                        <div class="project-media">
+                            <img src="assets/images/projects/ids-snort/snort-rule-creation.png" alt="Création de la règle Snort" loading="lazy">
+                            <figcaption>Règle Snort configurée : détection des scans réseau et tentatives d'énumération</figcaption>
+                        </div>
+
+                        <p><strong>Définition de la règle :</strong> Cette règle détecte les paquets ICMP (ping) et les tentatives de scan de ports provenant de sources externes, caractéristiques d'une phase de reconnaissance.</p>
+
+                        <p><span class="step-number">Étape 2</span> <strong>Simulation d'attaque depuis Kali Linux</strong></p>
+                        <p>Depuis une machine <strong>Kali Linux</strong>, exécution d'un scan réseau avec <strong>Nmap</strong> pour simuler une tentative de reconnaissance.</p>
+                        
+                        <div class="gallery">
+                            <figure>
+                                <img src="assets/images/projects/ids-snort/kali-nmap-command.png" alt="Commande Nmap sur Kali" loading="lazy">
+                                <figcaption>Commande Nmap exécutée depuis Kali Linux</figcaption>
+                            </figure>
+                            <figure>
+                                <img src="assets/images/projects/ids-snort/kali-nmap-results.png" alt="Résultats du scan Nmap" loading="lazy">
+                                <figcaption>Résultats du scan réseau (énumération des services)</figcaption>
+                            </figure>
+                        </div>
+
+                        <p><span class="step-number">Étape 3</span> <strong>Vérification des logs Snort sur pfSense</strong></p>
+                        <p>Après l'exécution du scan Nmap, consultation des <strong>logs Snort</strong> dans l'interface pfSense pour vérifier la détection.</p>
+                        
+                        <div class="project-media">
+                            <img src="assets/images/projects/ids-snort/snort-logs-detection.png" alt="Logs Snort - détection" loading="lazy">
+                            <figcaption>Logs Snort : requête détectée en provenance de la machine Kali Linux</figcaption>
+                        </div>
+
+                        <p><strong>Résultat :</strong> Snort a bien intercepté et enregistré la tentative de scan réseau en temps réel, validant l'efficacité de la règle configurée.</p>
+
+                        <p><span class="step-number">Étape 4</span> <strong>Mesures de réponse et blocage</strong></p>
+                        <p>Une fois la détection confirmée, possibilité de mettre en place des <strong>actions de réponse automatiques</strong> :</p>
+                        <ul>
+                            <li>Blocage des adresses IP source effectuant des scans répétés</li>
+                            <li>Isolation des requêtes externes suspectes ciblant des endpoints critiques</li>
+                            <li>Alertes en temps réel pour intervention rapide (First Responder)</li>
+                        </ul>
+
+                        <div class="project-media">
+                            <img src="assets/images/projects/ids-snort/blocking-rules.png" alt="Règles de blocage" loading="lazy">
+                            <figcaption>Configuration de règles de blocage automatique des IP malveillantes</figcaption>
+                        </div>
+
+                        <p><span class="step-number">Étape 5</span> <strong>Analyse selon MITRE ATT&amp;CK</strong></p>
+                        <p>La phase de reconnaissance détectée correspond à la première étape d'une <strong>chaîne d'attaque potentielle</strong> selon le framework <strong>MITRE ATT&amp;CK</strong>.</p>
+                        <p>Cette activité (scan réseau, énumération de services) constitue la tactique de <strong>Reconnaissance</strong> (TA0043), qui précède généralement des phases d'exploitation et de mouvement latéral.</p>
+                        
+                        <div class="project-media">
+                            <img src="assets/images/projects/ids-snort/mitre-attack-map.png" alt="MITRE ATT&CK - Reconnaissance" loading="lazy">
+                            <figcaption>Référence MITRE ATT&CK : phase de Reconnaissance — <a href="https://attack.mitre.org/tactics/TA0043/" target="_blank" style="color: var(--color-accent);">Voir la matrice complète</a></figcaption>
+                        </div>
+
+                        <p><strong>Implications :</strong></p>
+                        <ul>
+                            <li>La détection précoce de cette phase permet d'interrompre la chaîne d'attaque avant exploitation</li>
+                            <li>Sans détection IDS, l'attaquant aurait pu progresser vers des phases critiques (exploitation de vulnérabilités, élévation de privilèges, exfiltration de données)</li>
+                            <li>Validation du rôle de l'IDS comme composant essentiel d'une stratégie de défense en profondeur (Blue Team)</li>
+                        </ul>
+
+                        <p><strong>Impact :</strong> Détection réussie d'une phase de reconnaissance, validation du système IDS/IPS, capacité à bloquer des tentatives d'attaque avant exploitation, corrélation avec le framework MITRE ATT&amp;CK pour contextualiser la menace.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COMPÉTENCES -->
+        <section id="competences">
+            <h2 class="section-title">Compétences</h2>
+            <p class="section-subtitle">Compétences techniques acquises en autonomie, orientées cybersécurité opérationnelle</p>
+
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>Sécurité &amp; Audit</h3>
+                    <p>Hardening systèmes &amp; réseau (Linux, Windows, Active Directory), énumération AD, audit &amp; scanners, IDS/IPS, pentesting, outils réseau, Web &amp; BDD, SIEM, cadres &amp; méthodologies (IAAA, SSO, MITRE ATT&CK), opérations (First Responder, gestion de crise cyber).</p>
+                    <div class="skill-logos">
+                        <div class="skill-logo">
+                            <img src="https://th.bing.com/th/id/ODF.MooRinO5X_w4mYrfO-_Oog?w=32&h=32&qlt=90&pcl=fffffc&o=6&pid=1.2" alt="PingCastle">
+                            <span>PingCastle</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://d27a6xpc502mz5.cloudfront.net/wp-content/uploads/images-icons/product-logo-03.svg" alt="Purple Knight">
+                            <span>Purple Knight</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://www.kali.org/tools/bloodhound/images/bloodhound-logo.svg" alt="BloodHound">
+                            <span>BloodHound</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://www.kali.org/tools/netexec/images/netexec-logo.svg" alt="Netexec">
+                            <span>Netexec</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/snort/ff0000" alt="Snort">
+                            <span>Snort</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/kalilinux/557C94" alt="Kali Linux">
+                            <span>Kali Linux</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/metasploit/2596CD" alt="Metasploit">
+                            <span>Metasploit</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/burpsuite/FF6633" alt="Burp Suite">
+                            <span>Burp Suite</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/wireshark/1679A7" alt="Wireshark">
+                            <span>Wireshark</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://www.kali.org/tools/tcpdump/images/tcpdump-logo.svg" alt="Tcpdump">
+                            <span>Tcpdump</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://www.kali.org/tools/nmap/images/nmap-logo.svg" alt="Nmap">
+                            <span>Nmap</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/go/00ADD8" alt="GoBuster">
+                            <span>GoBuster</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://www.kali.org/tools/zaproxy/images/zaproxy-logo.svg" alt="OWASP ZAP">
+                            <span>OWASP ZAP</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://www.kali.org/tools/hydra/images/hydra-logo.svg" alt="Hydra">
+                            <span>Hydra</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://www.kali.org/tools/sqlmap/images/sqlmap-logo.svg" alt="SQLMap">
+                            <span>SQLMap</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/splunk/000000" alt="Splunk">
+                            <span>Splunk</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://th.bing.com/th/id/ODF.ahHfFKGDyFxq58G3zLvETQ?w=32&h=32&qlt=90&pcl=fffffc&o=6&pid=1.2" alt="Wazuh">
+                            <span>Wazuh</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/pfsense/212121" alt="pfSense">
+                            <span>pfSense</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://th.bing.com/th/id/ODF.0vgf4N7ybVhQ-Obv103jCw?w=32&h=32&qlt=90&pcl=fffffa&o=6&pid=1.2" alt="OpenVAS">
+                            <span>OpenVAS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-category">
+                    <h3>Automation &amp; Infrastructure</h3>
+                    <p>Sécurité logiciel (SAST, DAST, SSDLC), Python (lecture et analyse de programmes malveillants), scripting PowerShell/Bash, Infrastructure as Code (Terraform).</p>
+                    <div class="skill-logos">
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/python/3776AB" alt="Python">
+                            <span>Python</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://www.svgrepo.com/show/473762/powershell.svg" alt="PowerShell">
+                            <span>PowerShell</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/gnubash/4EAA25" alt="Bash">
+                            <span>Bash</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/terraform/7B42BC" alt="Terraform">
+                            <span>Terraform</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/git/F05032" alt="Git">
+                            <span>Git</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/github/181717" alt="GitHub">
+                            <span>GitHub</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-category">
+                    <h3>Infra / Cloud Security (en apprentissage)</h3>
+                    <p>AWS (fonctionnement du cloud et sécurité IAM), DevSecOps (sécurisation de pipelines CI/CD), conteneurisation (Docker et Kubernetes).</p>
+                    <div class="skill-logos">
+                        <div class="skill-logo">
+                            <img src="https://www.svgrepo.com/show/448266/aws.svg" alt="AWS">
+                            <span>AWS</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://www.svgrepo.com/show/448274/azure.svg" alt="Azure">
+                            <span>Azure</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/docker/2496ED" alt="Docker">
+                            <span>Docker</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/kubernetes/326CE5" alt="Kubernetes">
+                            <span>Kubernetes</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-category">
+                    <h3>Plateformes de Labs</h3>
+                    <p>TryHackMe – Security Engineer Path (AD, SOC, DevSecOps, pentesting), HackTheBox – Labs pratiques, LetsDefend – Blue Team training.</p>
+                    <div class="skill-logos">
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/tryhackme/212C42" alt="TryHackMe">
+                            <span>TryHackMe</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/hackthebox/9FEF00" alt="HackTheBox">
+                            <span>HackTheBox</span>
+                        </div>
+                        <div class="skill-logo">
+                            <img src="https://cdn.simpleicons.org/letsencrypt/003A70" alt="LetsDefend">
+                            <span>LetsDefend</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section id="contact">
+            <h2 class="section-title">Contact</h2>
+            <p class="section-subtitle">N'hésitez pas à me contacter</p>
+
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>m.lesne@lprs.fr</span>
+                    </div>
+                    <div class="contact-item">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>NotNotPossible</span>
+                    </div>
+                    <div class="contact-item">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Paris, France</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Portfolio BTS SISR. Tous droits réservés.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Gestion du mot de passe
+        const PASSWORD = 'bts2025!?';
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput');
+            const errorMsg = document.getElementById('errorMsg');
+            const passwordContainer = document.querySelector('.password-container');
+            
+            if (input.value === PASSWORD) {
+                document.getElementById('passwordPage').style.display = 'none';
+                document.getElementById('mainSite').classList.add('show');
+                sessionStorage.setItem('authenticated', 'true');
+            } else {
+                errorMsg.classList.add('show');
+                passwordContainer.classList.add('shake');
+                setTimeout(() => {
+                    errorMsg.classList.remove('show');
+                    passwordContainer.classList.remove('shake');
+                }, 500);
+            }
+        }
+
+        // Vérifier si déjà authentifié
+        window.addEventListener('DOMContentLoaded', () => {
+            if (sessionStorage.getItem('authenticated') === 'true') {
+                document.getElementById('passwordPage').style.display = 'none';
+                document.getElementById('mainSite').classList.add('show');
+            }
+        });
+
+        // Permettre de valider avec Enter
+        document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        // Menu mobile
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        function closeMenu() {
+            document.getElementById('navLinks').classList.remove('active');
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
